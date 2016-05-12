@@ -65,9 +65,6 @@ class WebhookDispatchServiceMaker(object):
     options = Options
 
     def makeService(self, config):
-        """
-        Construct a TCPServer from a factory defined in myproject.
-        """
         if config['plugins']:
             pluginLocation = modules.getModule(config['plugins']).load()
             hooks = list(getPlugins(IWebhook, pluginLocation))

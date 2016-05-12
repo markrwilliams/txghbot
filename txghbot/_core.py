@@ -84,6 +84,7 @@ class InvalidData(Exception):
 
 
 class WebhookDispatchingResource(Resource):
+    isLeaf = True
     JSON_ENCODING = 'utf-8'
 
     EVENT_HEADER = b'X-Github-Event'

@@ -60,3 +60,4 @@ target/
 _trial_temp*/
 dropin.cache
 *.lock
+.dev
