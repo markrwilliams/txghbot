@@ -15,16 +15,16 @@ from twisted.python.failure import Failure
 from zope.interface import implementer
 from zope.interface.verify import verifyObject
 
-import txghbot as T
+import txghbot._core as C
 
 
 class VerifyHMACTestCase(unittest.SynchronousTestCase):
 
     def _makeSignatureHeaders(self, *values):
-        return Headers({T.GITHUB_SIGNATURE_HEADER: list(values)})
+        return Headers({C.GITHUB_SIGNATURE_HEADER: list(values)})
 
     def assertHeadersFail(self, headers):
-        self.assertFalse(T.verifyHMAC(headers=headers,
+        self.assertFalse(C.verifyHMAC(headers=headers,
                                       content=self.content,
                                       key=self.key))
 
@@ -85,7 +85,7 @@ class VerifyHMACTestCase(unittest.SynchronousTestCase):
         signature = b'sha1=' + self.hexdigest
 
         headers = self._makeSignatureHeaders(signature)
-        self.assertTrue(T.verifyHMAC(headers=headers,
+        self.assertTrue(C.verifyHMAC(headers=headers,
                                      content=self.content,
                                      key=self.key))
 
@@ -117,7 +117,7 @@ class RecordsFakeWebhookActions(object):
         return self.runResult
 
 
-@implementer(T.IWebhook)
+@implementer(C.IWebhook)
 class FakeWebhook(object):
 
     def __init__(self, recorder):
@@ -154,19 +154,19 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
 
         self.recorder = RecordsFakeWebhookActions()
         self.hook = FakeWebhook(self.recorder)
-        verifyObject(T.IWebhook, self.hook)
+        verifyObject(C.IWebhook, self.hook)
 
         self.request = DummyRequestWithContent([b'ignoredPrepath'])
         self.eventName = b'an event'
         requestHeaders = self.request.requestHeaders
-        requestHeaders.setRawHeaders(T.WebhookDispatchingResource.EVENT_HEADER,
+        requestHeaders.setRawHeaders(C.WebhookDispatchingResource.EVENT_HEADER,
                                      [self.eventName])
         self.requestID = b'1234'
         requestHeaders.setRawHeaders(
-            T.WebhookDispatchingResource.REQUEST_ID_HEADER,
+            C.WebhookDispatchingResource.REQUEST_ID_HEADER,
             [self.requestID])
 
-        self.resource = T.WebhookDispatchingResource(
+        self.resource = C.WebhookDispatchingResource(
             signatureVerifier=self.fakeVerifier, hooks=[self.hook])
 
     def test__extractHeaderFailsWithMissingHeader(self):
@@ -175,7 +175,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         not contain the requested header.
         """
         empty = Headers({})
-        with self.assertRaises(T.InvalidData):
+        with self.assertRaises(C.InvalidData):
             self.resource._extractHeader(empty, b'x-some-header')
 
     def test__extractHeaderFailsWithNonASCIIValue(self):
@@ -187,7 +187,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
                      Headers({b'x-some-header': [b'\xff', b'ignored']}))
 
         for badValue in badValues:
-            with self.assertRaises(T.InvalidData):
+            with self.assertRaises(C.InvalidData):
                 self.resource._extractHeader(badValue, b'x-some-header')
             exceptions = self.flushLoggedErrors(UnicodeDecodeError)
             self.assertEqual(len(exceptions), 1)
@@ -212,7 +212,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         decoding error when attempting to decode a non-UTF8 encoded
         payload.
         """
-        with self.assertRaises(T.InvalidData):
+        with self.assertRaises(C.InvalidData):
             self.resource._deserializeContent(b'\xc3\x28')
 
         exceptions = self.flushLoggedErrors(UnicodeDecodeError)
@@ -224,7 +224,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         underlying deserialization exception when attempting to
         deserialize invalid JSON.
         """
-        with self.assertRaises(T.InvalidData):
+        with self.assertRaises(C.InvalidData):
             self.resource._deserializeContent(b'{"a": ')
 
         exceptions = self.flushLoggedErrors(ValueError)
@@ -338,7 +338,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         a 400 and no hooks are run.
         """
         def _failingExtractHeaders(headers, name):
-            raise T.InvalidData(name)
+            raise C.InvalidData(name)
 
         self.resource._extractHeader = _failingExtractHeaders
 
@@ -354,7 +354,7 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         no hooks are run.
         """
         def _failingDeserializeContent(content):
-            raise T.InvalidData(content)
+            raise C.InvalidData(content)
 
         self.resource._deserializeContent = _failingDeserializeContent
 
@@ -408,13 +408,13 @@ class WebhookDispatchingResourceIntegrationTestCase(
 
         requestHeaders = self.request.requestHeaders
         requestHeaders.setRawHeaders(
-            T.GITHUB_SIGNATURE_HEADER,
+            C.GITHUB_SIGNATURE_HEADER,
             [b'sha1=b559d6b83de3fd6ec2ea91e3009b46779a3dd47e'])
         requestHeaders.setRawHeaders(
-            T.WebhookDispatchingResource.EVENT_HEADER,
+            C.WebhookDispatchingResource.EVENT_HEADER,
             [self.eventName])
         requestHeaders.setRawHeaders(
-            T.WebhookDispatchingResource.REQUEST_ID_HEADER,
+            C.WebhookDispatchingResource.REQUEST_ID_HEADER,
             [self.requestID])
 
         # establish hooks
@@ -429,8 +429,8 @@ class WebhookDispatchingResourceIntegrationTestCase(
         self.unmatchedHook = FakeWebhook(self.unmatchedRecorder)
 
         # establish resource under test
-        self.resource = T.WebhookDispatchingResource(
-            signatureVerifier=functools.partial(T.verifyHMAC,
+        self.resource = C.WebhookDispatchingResource(
+            signatureVerifier=functools.partial(C.verifyHMAC,
                                                 key=self.secretKey),
             hooks=[self.unmatchedHook, self.matchedHook])
 
