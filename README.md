@@ -25,9 +25,6 @@ from zope.interface import implementer
 class ReopenPullRequest(object):
     MAGIC = u"!please-review"
 
-    def _normalizeBody(self, body):
-        return body.lower().split()
-
     def match(self, eventName, eventData):
         return (eventName == u'issue_comment'
                 and u'pull_request' in eventData[u'issue']
