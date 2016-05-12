@@ -4,11 +4,11 @@ import os
 from zope.interface.verify import verifyObject
 from zope.interface import implementer
 
-from twisted.python import usage
+from twisted.python import usage, modules
 from twisted.plugin import IPlugin, getPlugins
 from twisted.web import server
 from twisted.application.service import IServiceMaker
-from twisted.application import internet, service, strports
+from twisted.application import strports
 
 from ._core import verifyHMAC, IWebhook, WebhookDispatchingResource
 
@@ -45,7 +45,9 @@ class Options(usage.Options):
                       "Path to web CLF (Combined Log Format) log file."],
                      ["secret", "s", None,
                       "Path to the secret key"
-                      " - should be a single line file."]]
+                      " - should be a single line file."],
+                     ["plugins", "e", None,
+                      "Path to additional IWebhook plugins"]]
 
 
 def readSecret(path):
@@ -66,7 +68,12 @@ class WebhookDispatchServiceMaker(object):
         """
         Construct a TCPServer from a factory defined in myproject.
         """
-        hooks = list(getPlugins(IWebhook))
+        if config['plugins']:
+            pluginLocation = modules.getModule(config['plugins']).load()
+            hooks = list(getPlugins(IWebhook, pluginLocation))
+        else:
+            hooks = list(getPlugins(IWebhook))
+
         root = makeWebhookDispatchingResource(readSecret(config['secret']),
                                               hooks)
         if config['logfile']:
