@@ -12,18 +12,23 @@ $ mkdir -p scratch/twisted/plugins && cd scratch
 
 Then put your secret in a file called, say, `secret` in that directory.
 
-Then put this in, say, `reopener.py` inside `scratch/twisted/pluins`:
+Then put this in, say, `reopener.py` inside `scratch/twisted/plugins`:
 
 ````python
 from txghbot import IWebhook
+from twisted.internet.defer import gatherResults
 from twisted.plugin import IPlugin
 
 from zope.interface import implementer
+from txgithub.api import GithubApi
 
 
 @implementer(IWebhook, IPlugin)
 class ReopenPullRequest(object):
     MAGIC = u"!please-review"
+
+    def __init__(self, token):
+        self.api = GithubApi(token)
 
     def match(self, eventName, eventData):
         return (eventName == u'issue_comment'
@@ -33,10 +38,20 @@ class ReopenPullRequest(object):
                 and eventData[u'comment'][u'body'].strip() == self.MAGIC)
 
     def run(self, eventName, eventData, requestID):
-        print 'please reopen this one!', eventData['issue']['html_url']
+        user = eventData[u'repository'][u'owner'][u'login'].encode('ascii')
+        repo = eventData[u'repository'][u'name'].encode('ascii')
+        pullNumber = str(eventData[u'issue'][u'number'])
 
+        reopen = self.api.pulls.edit(user, repo, pullNumber, state="open")
 
-reopener = ReopenPullRequest()
+        def makeComment(ignored):
+            return self.api.comments.create(user, repo, pullNumber,
+                                            "Reopened, just for you!")
+
+        reopen.addCallback(makeComment)
+        return reopen
+
+reopener = ReopenPullRequest(YOUR_OAUTH2_TOKEN_HERE)
 ````
 
 ...then run txghbot like so:
