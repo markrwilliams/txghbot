@@ -2,6 +2,8 @@
 
 But if you do, try this:
 
+Grab a copy of the master branch at https://github.com/tomprince/txgithub and install it.  The master branch knows about pull request and comments.
+
 Set up a Github webhook that fires on issue_comment and point at your computer, port 8080 (firewalls!).
 
 Then, do this:
@@ -16,7 +18,6 @@ Then put this in, say, `reopener.py` inside `scratch/twisted/plugins`:
 
 ````python
 from txghbot import IWebhook
-from twisted.internet.defer import gatherResults
 from twisted.plugin import IPlugin
 
 from zope.interface import implementer
