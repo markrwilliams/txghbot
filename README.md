@@ -1,4 +1,4 @@
-# Don't use this yet
+# This is an example work flow using the README's plugin.
 
 But if you do, try this:
 
