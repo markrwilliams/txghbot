@@ -91,8 +91,6 @@ class VerifyHMACTestCase(unittest.SynchronousTestCase):
 
 
 def _isException(thing):
-    if isinstance(thing, Exception):
-        return True
     if isinstance(thing, type) and issubclass(thing, Exception):
         return True
     return False
@@ -112,8 +110,6 @@ class RecordsFakeWebhookActions(object):
         return self.matchResult
 
     def returnFromRun(self):
-        if _isException(self.runResult):
-            raise self.runResult
         return self.runResult
 
 
@@ -214,7 +210,6 @@ class WebhookDispatchingResourceTestCase(unittest.TestCase):
         """
         with self.assertRaises(C.InvalidData):
             self.resource._deserializeContent(b'\xc3\x28')
-
         exceptions = self.flushLoggedErrors(UnicodeDecodeError)
         self.assertEqual(len(exceptions), 1)
 

@@ -1,5 +1,4 @@
 import functools
-import os
 
 from zope.interface.verify import verifyObject
 from zope.interface import implementer
@@ -13,13 +12,14 @@ from twisted.application import strports
 from ._core import verifyHMAC, IWebhook, WebhookDispatchingResource
 
 
-def makeWebhookDispatchingResource(secretKey, hooks):
+def makeWebhookDispatchingResource(secretKey, hooks,
+                                   _verifyHMAC=verifyHMAC):
     """
     Creates a L{txghbot._core.WebhookDispatchingResource} instance.
 
     @type secretKey: C{unicode}/C{str}
-    @param secretKey: The secret key that Github HMACs each request body with.
-        See the Github docs.
+    @param secretKey: The secret key that Github HMACs each request
+        body with.  See the Github docs.
 
     @type hooks: Sequence of L{txghbot._core.IWebhook}
     @type hooks: The hooks to possibly run upon receiving an event.
@@ -32,7 +32,7 @@ def makeWebhookDispatchingResource(secretKey, hooks):
         verifyObject(IWebhook, hook)
 
     return WebhookDispatchingResource(
-        signatureVerifier=functools.partial(verifyHMAC,
+        signatureVerifier=functools.partial(_verifyHMAC,
                                             key=secretKey),
         hooks=hooks)
 
@@ -51,10 +51,24 @@ class Options(usage.Options):
 
 
 def readSecret(path):
-    if not path or not os.path.exists(path):
-        raise RuntimeError("must provide secret file path")
+    """
+    Retrieve the secret key stored at L{path}.
+
+    @type path: L{str}
+    @param path: the path to the secret key
+
+    @return: the secret
+    @rtype: L{str}
+
+    @raise L{RuntimeError}: If the secret file is empty.
+    """
     with open(path, 'r') as f:
-        return f.read().rstrip('\r').rstrip('\n')
+        secret = f.read().rstrip('\r\n')
+
+    if not secret:
+        raise RuntimeError("Secret file {} was empty!".format(path))
+
+    return secret
 
 
 @implementer(IServiceMaker,
@@ -64,18 +78,38 @@ class WebhookDispatchServiceMaker(object):
     description = "A Github Webhook event dispatacher"
     options = Options
 
+    def __init__(
+            self,
+            _readSecret=readSecret,
+            _getPlugins=getPlugins,
+            _makeWebhookDispatchingResource=makeWebhookDispatchingResource,
+            _strportsService=strports.service,
+            _getModule=modules.getModule,
+            _Site=server.Site):
+        self.readSecret = _readSecret
+        self.getModule = _getModule
+        self.getPlugins = _getPlugins
+        self.makeWebhookDispatchingResource = _makeWebhookDispatchingResource
+        self.strportsService = _strportsService
+        self.Site = _Site
+
     def makeService(self, config):
+        secretPath = config['secret']
+        if not secretPath:
+            raise RuntimeError("--secret is required")
+
+        secret = self.readSecret(secretPath)
+
         if config['plugins']:
-            pluginLocation = modules.getModule(config['plugins']).load()
-            hooks = list(getPlugins(IWebhook, pluginLocation))
+            pluginLocation = self.getModule(config['plugins']).load()
+            hooks = list(self.getPlugins(IWebhook, pluginLocation))
         else:
-            hooks = list(getPlugins(IWebhook))
+            hooks = list(self.getPlugins(IWebhook))
 
-        root = makeWebhookDispatchingResource(readSecret(config['secret']),
-                                              hooks)
+        root = self.makeWebhookDispatchingResource(secret, hooks)
         if config['logfile']:
-            site = server.Site(root, logPath=config['logfile'])
+            site = self.Site(root, logPath=config['logfile'])
         else:
-            site = server.Site(root)
+            site = self.Site(root)
 
-        return strports.service(config['port'], site)
+        return self.strportsService(config['port'], site)
