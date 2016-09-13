@@ -1,3 +1,10 @@
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
+
+"""
+The C{twistd} support code.  Don't call this directly!
+"""
+
 import functools
 
 from zope.interface.verify import verifyObject
@@ -21,7 +28,7 @@ def makeWebhookDispatchingResource(secretKey, hooks,
     @param secretKey: The secret key that Github HMACs each request
         body with.  See the Github docs.
 
-    @type hooks: Sequence of L{txghbot._core.IWebhook}
+    @param hooks: Sequence of L{txghbot._core.IWebhook}
     @type hooks: The hooks to possibly run upon receiving an event.
 
     @rtype: L{txghbot._core.WebhookDispatchingResource}
@@ -37,7 +44,12 @@ def makeWebhookDispatchingResource(secretKey, hooks,
         hooks=hooks)
 
 
+
 class Options(usage.Options):
+    """
+    C{twistd} plugin command line options.
+    """
+
     optParameters = [["port", "p", "tcp:8080",
                       "strports description of the port to "
                       "start the server on."],
@@ -50,6 +62,7 @@ class Options(usage.Options):
                       "Path to additional IWebhook plugins"]]
 
 
+
 def readSecret(path):
     """
     Retrieve the secret key stored at L{path}.
@@ -60,7 +73,7 @@ def readSecret(path):
     @return: the secret
     @rtype: L{str}
 
-    @raise L{RuntimeError}: If the secret file is empty.
+    @raise: L{RuntimeError} if the secret file is empty.
     """
     with open(path, 'r') as f:
         secret = f.read().rstrip('\r\n')
@@ -71,9 +84,14 @@ def readSecret(path):
     return secret
 
 
+
 @implementer(IServiceMaker,
              IPlugin)
 class WebhookDispatchServiceMaker(object):
+    """
+    Make the web hook dispatching
+    L{twisted.application.service.Service}
+    """
     tapname = "txghbot"
     description = "A Github Webhook event dispatacher"
     options = Options
@@ -93,7 +111,19 @@ class WebhookDispatchServiceMaker(object):
         self.strportsService = _strportsService
         self.Site = _Site
 
+
     def makeService(self, config):
+        """
+        Create the service.
+
+        @param config: the command line configuration for this
+            service.
+        @type config: a L{dict}-like object
+
+        @return: an L{twisted.application.service.IService}-providing
+            object.
+        @rtype: L{twisted.application.service.IService}
+        """
         secretPath = config['secret']
         if not secretPath:
             raise RuntimeError("--secret is required")

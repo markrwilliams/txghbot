@@ -1,3 +1,11 @@
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
+
+"""
+The core functionality of the webhook server.  Don't use this
+directly!
+"""
+
 import json
 import hmac
 import hashlib
@@ -13,7 +21,25 @@ log = Logger()
 GITHUB_SIGNATURE_HEADER = b'X-Hub-Signature'
 
 
+
 def verifyHMAC(headers, content, key):
+    """
+    Verify the signature of a request.
+
+    @param headers: the headers that contain the request under the
+        expected header name.
+    @type headers: L{twisted.web.http_headers.Headers}
+
+    @param content: the signed content
+    @type content: L{bytes}
+
+    @param key: the key that signed this request.
+    @type key: L{bytes}
+
+    @return: L{True} if the signature could be verified and L{False}
+        if not.
+    @rtype: L{bool}
+    """
     algorithmSignaturePairs = headers.getRawHeaders(GITHUB_SIGNATURE_HEADER)
 
     if algorithmSignaturePairs is None or len(algorithmSignaturePairs) != 1:
@@ -37,6 +63,7 @@ def verifyHMAC(headers, content, key):
     calculatedSignature = hmac.new(key, content, hashlib.sha1).hexdigest()
 
     return hmac.compare_digest(signature, calculatedSignature)
+
 
 
 class IWebhook(Interface):
@@ -79,11 +106,30 @@ class IWebhook(Interface):
         """
 
 
+
 class InvalidData(Exception):
-    """Raised when L{WebhookDispatchingResource}"""
+    """
+    Raised when L{WebhookDispatchingResource} can't interpret some
+    aspect of a request.
+    """
+
 
 
 class WebhookDispatchingResource(Resource):
+    """
+    A L{Resource} subclass that authenticates Github web hook requests
+    and dispatches to L{IWebhook} implementing plugins.
+
+    @param signatureVerifier: a callable that accepts two arguments: a
+        L{twisted.web.http_headers.Headers} instance and the L{bytes}
+        body of the corresponding request, and returns L{True} if the
+        request's signature passes verification and L{False} if not.
+    @type signatureVerifier: L{callable}
+
+    @param hooks: An iterable of web hooks to match and possibly run
+        against a request.
+    @type hooks: an iterable of L{IWebhook}-providing objects.
+    """
     isLeaf = True
     JSON_ENCODING = 'utf-8'
 
@@ -94,7 +140,25 @@ class WebhookDispatchingResource(Resource):
         self.signatureVerifier = signatureVerifier
         self.hooks = hooks
 
+
     def _extractHeader(self, headers, name):
+        """
+        Extract the first value for C{name} in C{headers} or raise
+        L{InvalidData}.
+
+        @param headers: The headers from which to extract the desired
+            value.
+        @type headers: L{twisted.web.http_headers.Headers}
+
+        @param name: The name of the header to extract.
+        @type name: L{bytes}
+
+        @return: The first header value under C{name}
+        @rtype: L{str}, decoded as ASCII.
+
+        @raises: L{InvalidData} if the header is missing, or if its
+            first value cannot be decoded as ASCII.
+        """
         headerValues = headers.getRawHeaders(name)
         if not headerValues:
             raise InvalidData(name)
@@ -105,7 +169,19 @@ class WebhookDispatchingResource(Resource):
                         name=name, value=headerValues)
             raise InvalidData(name)
 
+
     def _deserializeContent(self, content):
+        """
+        Deserialize the JSON stored in C{content}.
+
+        @param content: The serialized JSON to deserialize
+        @type content: L{bytes}
+
+        @return: the deserialized JSON object.
+        @rtype: L{dict}
+
+        @raises: L{InvalidData} if a JSON object cannot be decoded.
+        """
         try:
             decoded = content.decode(self.JSON_ENCODING)
             return json.loads(decoded)
@@ -114,7 +190,24 @@ class WebhookDispatchingResource(Resource):
                         " {content!r}", content=content)
             raise InvalidData(content)
 
+
     def _matchHook(self, hook, eventName, eventData):
+        """
+        Determine if C{hook} matches C{eventName} and C{eventData}.
+
+        @param hook: the web hook to try to match against C{eventName}
+            and C{eventData}
+        @type hook: an L{IWebhook}-providing object
+
+        @param eventName: the name of the Github webhook event
+        @type eventName: L{str}
+
+        @param eventData: the event data for this Github webhook
+            event.
+        @type eventData: L{dict}
+
+        @return: L{True} if the hook matched and L{False} if not.
+        """
         try:
             return hook.match(eventName, eventData)
         except Exception:
@@ -125,7 +218,29 @@ class WebhookDispatchingResource(Resource):
                         eventData=eventData)
             return False
 
+
     def _processHookResults(self, results, hooks, request, requestID):
+        """
+        Traverse C{results} and set the response code to 400 if any
+        hooks failed to run.
+
+        Intended to be run as added as a callback to a L{DeferredList}
+        of hook results.
+
+        @param results: The results of running each hook in C{hooks}
+            against C{request}
+        @type results: A list of (index, (outcome, value)) L{tuple}s.
+
+        @param hooks: an iterable of L{IWebhook}-providing objects that
+            were run against C{request}
+        @type hooks: iterable of L{IWebhook}-providing objects.
+
+        @param request: the Github web hook request.
+        @type request: L{twisted.web.server.Request}
+
+        @param requestID: the Github ID for C{request}
+        @type requestID: L{str}
+        """
         request.setResponseCode(200)
 
         for idx, (outcome, value) in enumerate(results):
@@ -138,7 +253,18 @@ class WebhookDispatchingResource(Resource):
 
         request.finish()
 
+
     def render_POST(self, request):
+        """
+        Verify that C{request} came from Github, then run any matching
+        L{IWebhook}s from C{self.hooks}
+
+        @param request: The request to verify and match hooks against.
+        @type request: L{twisted.web.server.Request}
+
+        @return: L{NOT_DONE_YET}
+        @rtype: L{NOT_DONE_YET}
+        """
         content = request.content.read()
         if not self.signatureVerifier(request.requestHeaders, content):
             request.setResponseCode(403)
