@@ -9,6 +9,7 @@ directly!
 import json
 import hmac
 import hashlib
+import sys
 from twisted.internet import defer
 from twisted.web.server import NOT_DONE_YET
 from twisted.web.resource import Resource
@@ -19,6 +20,20 @@ log = Logger()
 
 
 GITHUB_SIGNATURE_HEADER = b'X-Hub-Signature'
+
+
+
+def _hexdigestBytes(hmacObject):
+    """
+    Return the hex digest of an L{hmac.HMAC} object as L{bytes}.
+
+    @param hmacObject: the HMAC object to digest.
+    @type hmacObject: L{hmac.HMAC}
+    """
+    digest = hmacObject.hexdigest()
+    if sys.version_info.major == 2:
+        return digest
+    return digest.encode('ascii')
 
 
 
@@ -60,7 +75,9 @@ def verifyHMAC(headers, content, key):
                   headers=headers)
         return False
 
-    calculatedSignature = hmac.new(key, content, hashlib.sha1).hexdigest()
+    calculatedSignature = _hexdigestBytes(hmac.new(key,
+                                                   content,
+                                                   hashlib.sha1))
 
     return hmac.compare_digest(signature, calculatedSignature)
 

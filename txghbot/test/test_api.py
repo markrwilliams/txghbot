@@ -101,10 +101,10 @@ class ReadSecretTests(unittest.TestCase):
         preserved.
         """
         with self.secretFile.open('w') as f:
-            f.write(" this is a secret \r\n")
+            f.write(b" this is a secret \r\n")
 
         self.assertEqual(readSecret(self.secretFilePath),
-                         " this is a secret ")
+                         b" this is a secret ")
 
 
 class FakeModuleWrapper(object):

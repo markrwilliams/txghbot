@@ -1,7 +1,15 @@
+"""
+Setup file for txghbot.
+"""
+
 from setuptools import setup, find_packages
 
 setup(name='txghbot',
+      use_incremental=True,
+      setup_requires=['incremental'],
+      install_requires=['incremental',
+                        'six',
+                        'Twisted>=16.4.1'],
       packages=find_packages() + ['twisted.plugins'],
-      version='16.0.0',
-      install_requires=['Twisted>=16.3.2',
-                        'txgithub'])
+      include_package_data=True,
+      license="MIT")

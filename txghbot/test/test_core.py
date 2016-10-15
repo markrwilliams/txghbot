@@ -18,6 +18,16 @@ from zope.interface.verify import verifyObject
 import txghbot._core as C
 
 
+class HexdigestBytesTestCase(unittest.SynchronousTestCase):
+
+    def test_returnIsBytes(self):
+        """
+        The return value is L{bytes}.
+        """
+        self.assertIsInstance(C._hexdigestBytes(hmac.new(b"something")),
+                              bytes)
+
+
 class VerifyHMACTestCase(unittest.SynchronousTestCase):
 
     def _makeSignatureHeaders(self, *values):
@@ -31,9 +41,9 @@ class VerifyHMACTestCase(unittest.SynchronousTestCase):
     def setUp(self):
         self.content = b'some content'
         self.key = b'key'
-        self.hexdigest = hmac.new(self.key,
-                                  self.content,
-                                  hashlib.sha1).hexdigest()
+        self.hexdigest = C._hexdigestBytes(hmac.new(self.key,
+                                                    self.content,
+                                                    hashlib.sha1))
 
     def test_missingSignatureFails(self):
         """
@@ -58,9 +68,9 @@ class VerifyHMACTestCase(unittest.SynchronousTestCase):
         """
         Headers containing a non-SHA1 HMAC fail to verify.
         """
-        hexdigest = hmac.new(self.key,
-                             self.content,
-                             hashlib.md5).hexdigest()
+        hexdigest = C._hexdigestBytes(hmac.new(self.key,
+                                               self.content,
+                                               hashlib.md5))
         md5Signature = b'md5=' + hexdigest
         self.assertHeadersFail(self._makeSignatureHeaders(md5Signature))
 
@@ -69,8 +79,9 @@ class VerifyHMACTestCase(unittest.SynchronousTestCase):
         Headers with a SHA1 HMAC that is not derived from request's
         content and the secret key fail to verify.
         """
-        badSHA1 = hmac.new(self.key + self.key, self.content,
-                           hashlib.sha1).hexdigest()
+        badSHA1 = C._hexdigestBytes(hmac.new(self.key + self.key,
+                                             self.content,
+                                             hashlib.sha1))
         self.assertNotEqual(badSHA1, self.hexdigest)
 
         badSignature = b'sha1=' + badSHA1

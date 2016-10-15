@@ -24,7 +24,7 @@ def makeWebhookDispatchingResource(secretKey, hooks,
     """
     Creates a L{txghbot._core.WebhookDispatchingResource} instance.
 
-    @type secretKey: C{unicode}/C{str}
+    @type secretKey: L{bytes}
     @param secretKey: The secret key that Github HMACs each request
         body with.  See the Github docs.
 
@@ -71,12 +71,12 @@ def readSecret(path):
     @param path: the path to the secret key
 
     @return: the secret
-    @rtype: L{str}
+    @rtype: L{bytes}
 
     @raise: L{RuntimeError} if the secret file is empty.
     """
-    with open(path, 'r') as f:
-        secret = f.read().rstrip('\r\n')
+    with open(path, 'rb') as f:
+        secret = f.read().rstrip(b'\r\n')
 
     if not secret:
         raise RuntimeError("Secret file {} was empty!".format(path))
