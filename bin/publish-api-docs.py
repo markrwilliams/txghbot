@@ -25,9 +25,10 @@ def commitToGithubPages():
     """
     subprocess.check_call(['git', 'checkout', 'gh-pages'])
     open('index.html', 'w').close()
+    subprocess.check_call(['git', 'add', 'index.html'])
     subprocess.check_call(['git', 'add', 'apidocs'])
     subprocess.check_call(['git', 'commit', '-m', 'update API docs'])
-
+    subprocess.check_call(['git', 'checkout', 'master'])
 
 generateDocs()
 commitToGithubPages()
