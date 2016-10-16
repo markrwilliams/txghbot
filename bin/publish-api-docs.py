@@ -5,8 +5,11 @@ import argparse
 import subprocess
 
 TXGHBOT_MODULE_DIR = "txghbot"
-INTERSPHINX_LINKS = ("https://docs.python.org/2/objects.inv",
-                     "https://docs.python.org/3/objects.inv")
+INTERSPHINX_LINKS = (
+    "https://docs.python.org/2/objects.inv",
+    "https://docs.python.org/3/objects.inv",
+    "http://twistedmatrix.com/documents/current/api/objects.inv",
+)
 
 
 def generateDocs():

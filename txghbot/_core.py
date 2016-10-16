@@ -113,13 +113,15 @@ class IWebhook(Interface):
         @param eventData: the deserialized event payload.
 
         @type requestID: L{unicode}/L{str}
-        @param requestID: the identifier Github provided for this event.
-           Useful for logging.
+        @param requestID: the identifier Github provided for this
+            event.  Useful for logging.
 
-        @rtype: L{Deferred} or some immediate value.
-        @return: If a L{Deferred} is return, it must fire when this hook has
-            finished running. Failures will be logged by
-            L{WebhookDispatchingResource}.  All other results will be ignored.
+        @rtype: L{twisted.internet.defer.Deferred} or some immediate
+            value.
+        @return: If a L{twisted.internet.defer.Deferred} is return, it
+            must fire when this hook has finished running.  Failures
+            will be logged by L{WebhookDispatchingResource}.  All
+            other results will be ignored.
         """
 
 
@@ -241,15 +243,15 @@ class WebhookDispatchingResource(Resource):
         Traverse C{results} and set the response code to 400 if any
         hooks failed to run.
 
-        Intended to be run as added as a callback to a L{DeferredList}
-        of hook results.
+        Intended to be run as added as a callback to a
+        L{twisted.internet.defer.DeferredList} of hook results.
 
         @param results: The results of running each hook in C{hooks}
             against C{request}
         @type results: A list of (index, (outcome, value)) L{tuple}s.
 
-        @param hooks: an iterable of L{IWebhook}-providing objects that
-            were run against C{request}
+        @param hooks: an iterable of L{IWebhook}-providing objects
+            that were run against C{request}
         @type hooks: iterable of L{IWebhook}-providing objects.
 
         @param request: the Github web hook request.
