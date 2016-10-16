@@ -1,64 +1,12 @@
-# Don't use this yet
+# txghbot
 
-But if you do, try this:
+[![Build Status](https://api.travis-ci.org/markrwilliams/txghbot.svg?branch=master)](https://api.travis-ci.org/markrwilliams/txghbot.svg?branch=master)
+[![Coverage Status](https://codecov.io/github/markrwilliams/txghbot)](Coverage Status](https://codecov.io/github/markrwilliams/txghbot)
 
-Grab a copy of the master branch at https://github.com/tomprince/txgithub and install it.  The master branch knows about pull request and comments.
+A server that runs [Twisted](https://www.twistedmatrix.com) [plugins](http://twistedmatrix.com/documents/current/core/howto/tap.html) on [Github webhook requests](https://developer.github.com/webhooks/).
 
-Set up a Github webhook that fires on issue_comment and point it at your computer, port 8080 (firewalls!)
+## Usage
 
-Then, do this:
-
-````
-$ mkdir -p scratch/twisted/plugins && cd scratch
-````
-
-Then put your secret in a file called, say, `secret` in that directory.
-
-Then put this in, say, `reopener.py` inside `scratch/twisted/plugins`:
-
-````python
-from txghbot import IWebhook
-from twisted.plugin import IPlugin
-
-from zope.interface import implementer
-from txgithub.api import GithubApi
-
-
-@implementer(IWebhook, IPlugin)
-class ReopenPullRequest(object):
-    MAGIC = u"!please-review"
-
-    def __init__(self, token):
-        self.api = GithubApi(token)
-
-    def match(self, eventName, eventData):
-        return (eventName == u'issue_comment'
-                and u'pull_request' in eventData[u'issue']
-                and eventData[u'action'] in (u'created',
-                                             u'edited')
-                and eventData[u'comment'][u'body'].strip() == self.MAGIC)
-
-    def run(self, eventName, eventData, requestID):
-        user = eventData[u'repository'][u'owner'][u'login'].encode('ascii')
-        repo = eventData[u'repository'][u'name'].encode('ascii')
-        pullNumber = str(eventData[u'issue'][u'number'])
-
-        reopen = self.api.pulls.edit(user, repo, pullNumber, state="open")
-
-        def makeComment(ignored):
-            return self.api.comments.create(user, repo, pullNumber,
-                                            "Reopened, just for you!")
-
-        reopen.addCallback(makeComment)
-        return reopen
-
-reopener = ReopenPullRequest(YOUR_OAUTH2_TOKEN_HERE)
-````
-
-...then run txghbot like so:
-
-````
-$ twistd -n txghbot --secret ./secret
-````
-
-And watch as you find out about pull requests against your repo that gain a special comment.
+1. Write a plugin that implements `txghbot.IWebhook` and make it accessible to `twisted.plugin`.
+2. Put the secret in a file, such as `.dev/secret`
+3. `twist txghbot --secret=./dev/secret`
