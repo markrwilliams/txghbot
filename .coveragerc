@@ -1,5 +1,0 @@
-[paths]
-source =
-   txghbot
-   .tox/*/lib/python*/site-packages/txghbot
-   .tox/*/site-packages/txghbot
