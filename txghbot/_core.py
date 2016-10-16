@@ -90,15 +90,15 @@ class IWebhook(Interface):
 
     def match(eventName, eventData):
         """
-        Decide if this webhook run for this event.
+        Decide if this webhook should run for this event.
 
-        @type eventName: C{unicode}/C{str}
+        @type eventName: L{unicode}/L{str}
         @param eventName: the name of the received Github event.
 
-        @type eventData: C{dict}
+        @type eventData: L{dict}
         @param eventData: the deserialized event payload.
 
-        @rtype: C{bool}
+        @rtype: L{bool}
         @return: True if this hook should run on this event; False otherwise.
         """
 
@@ -106,13 +106,13 @@ class IWebhook(Interface):
         """
         Run the webhook
 
-        @type eventName: C{unicode}/C{str}
+        @type eventName: L{unicode}/L{str}
         @param eventName: the name of the received Github event.
 
-        @type eventData: C{dict}
+        @type eventData: L{dict}
         @param eventData: the deserialized event payload.
 
-        @type requestID: C{unicode}/C{str}
+        @type requestID: L{unicode}/L{str}
         @param requestID: the identifier Github provided for this event.
            Useful for logging.
 

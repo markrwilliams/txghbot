@@ -1,12 +1,12 @@
 """
 Run and publish the API docs
 """
-
+import argparse
 import subprocess
 
 TXGHBOT_MODULE_DIR = "txghbot"
-INTERSPHINX_LINKS = ("https://docs.python.org/2",
-                     "https://docs.python.org/3")
+INTERSPHINX_LINKS = ("https://docs.python.org/2/objects.inv",
+                     "https://docs.python.org/3/objects.inv")
 
 
 def generateDocs():
@@ -30,5 +30,13 @@ def commitToGithubPages():
     subprocess.check_call(['git', 'commit', '-m', 'update API docs'])
     subprocess.check_call(['git', 'checkout', 'master'])
 
+
+parser = argparse.ArgumentParser("generate and maybe publish API docs.")
+parser.add_argument('--publish', '-p',
+                    default=False,
+                    help="commit the generated docs to gh-pages and push")
+
+args = parser.parse_args()
 generateDocs()
-commitToGithubPages()
+if args.publish:
+    commitToGithubPages()
