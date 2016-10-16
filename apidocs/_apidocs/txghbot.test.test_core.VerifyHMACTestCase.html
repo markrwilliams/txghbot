@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>txghbot.test.test_core.VerifyHMACTestCase : API documentation</title>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link type="text/css" rel="stylesheet" href="bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="apidocs.css" />
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">
+            txghbot API Documentation
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div id="showPrivate">
+      <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+    </div>
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="class"><code>txghbot.test.test_core.VerifyHMACTestCase(<span title="twisted.trial.unittest.SynchronousTestCase">unittest.SynchronousTestCase</span>)</code> <small>class documentation</small></h1>
+
+        <span id="partOf">
+          Part of <code><a href="txghbot.html" data-type="Package" class="code">txghbot</a>.<a href="txghbot.test.html" data-type="Package" class="code">test</a>.<a href="txghbot.test.test_core.html" data-type="Module" class="code">test_core</a></code>
+          
+          <a href="classIndex.html#txghbot.test.test_core.VerifyHMACTestCase">(View In Hierarchy)</a>
+        </span>
+      </div>
+
+      <div class="extrasDocstring">
+        
+      </div>
+
+      <div class="moduleDocstring">
+        <div class="undocumented">No class docstring</div>
+      </div>
+
+      <div id="splitTables">
+        <table class="children sortable" id="id17">
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#assertHeadersFail" data-type="Method" class="code">assertHeadersFail</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#setUp" data-type="Method" class="code">setUp</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_missingSignatureFails" data-type="Method" class="code">test_missingSignatureFails</a></td>
+    <td><span>Headers that lack the HMAC header fail to verify.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_tooManySignaturesFail" data-type="Method" class="code">test_tooManySignaturesFail</a></td>
+    <td><span>Headers with more than one value for HMAC header fail to verify.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_malformedSignatureFails" data-type="Method" class="code">test_malformedSignatureFails</a></td>
+    <td><span>Headers containing an improperly formatted HMAC fail to verify.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_notSHA1Fails" data-type="Method" class="code">test_notSHA1Fails</a></td>
+    <td><span>Headers containing a non-SHA1 HMAC fail to verify.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_incorrectSignatureFails" data-type="Method" class="code">test_incorrectSignatureFails</a></td>
+    <td><span>Headers with a SHA1 HMAC that is not derived from request's content and 
+the secret key fail to verify.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#test_correctSignatureSucceeds" data-type="Method" class="code">test_correctSignatureSucceeds</a></td>
+    <td><span>Headers with a SHA1 HMAC derived from the request's content and the 
+secret key verify successfully.</span></td>
+  </tr><tr class="method private">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.VerifyHMACTestCase.html#_makeSignatureHeaders" data-type="Method" class="code">_makeSignatureHeaders</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr>
+</table>
+        
+
+          
+      </div>
+
+      <div id="childList">
+
+        <div class="basemethod private">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase._makeSignatureHeaders">
+    
+  </a>
+  <a name="_makeSignatureHeaders">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    _makeSignatureHeaders(self, *values):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.assertHeadersFail">
+    
+  </a>
+  <a name="assertHeadersFail">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    assertHeadersFail(self, headers):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.setUp">
+    
+  </a>
+  <a name="setUp">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    setUp(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_missingSignatureFails">
+    
+  </a>
+  <a name="test_missingSignatureFails">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_missingSignatureFails(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers that lack the HMAC header fail to verify.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_tooManySignaturesFail">
+    
+  </a>
+  <a name="test_tooManySignaturesFail">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_tooManySignaturesFail(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers with more than one value for HMAC header fail to verify.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_malformedSignatureFails">
+    
+  </a>
+  <a name="test_malformedSignatureFails">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_malformedSignatureFails(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers containing an improperly formatted HMAC fail to verify.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_notSHA1Fails">
+    
+  </a>
+  <a name="test_notSHA1Fails">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_notSHA1Fails(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers containing a non-SHA1 HMAC fail to verify.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_incorrectSignatureFails">
+    
+  </a>
+  <a name="test_incorrectSignatureFails">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_incorrectSignatureFails(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers with a SHA1 HMAC that is not derived from request's content and 
+the secret key fail to verify.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.VerifyHMACTestCase.test_correctSignatureSucceeds">
+    
+  </a>
+  <a name="test_correctSignatureSucceeds">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_correctSignatureSucceeds(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Headers with a SHA1 HMAC derived from the request's content and the 
+secret key verify successfully.</p><table class="fieldTable"></table></div>
+  </div>
+</div>
+
+      </div>
+      <address>
+        <a href="index.html">API Documentation</a> for txghbot, generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a> at 2016-10-15 18:47:31.
+      </address>
+
+    </div>
+
+    <script type="text/javascript" src="pydoctor.js"></script>
+
+  </body>
+</html>

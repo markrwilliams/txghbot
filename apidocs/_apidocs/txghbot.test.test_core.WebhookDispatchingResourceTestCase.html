@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>txghbot.test.test_core.WebhookDispatchingResourceTestCase : API documentation</title>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link type="text/css" rel="stylesheet" href="bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="apidocs.css" />
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">
+            txghbot API Documentation
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div id="showPrivate">
+      <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+    </div>
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 class="class"><code>txghbot.test.test_core.WebhookDispatchingResourceTestCase(<span title="twisted.trial.unittest.TestCase">unittest.TestCase</span>)</code> <small>class documentation</small></h1>
+
+        <span id="partOf">
+          Part of <code><a href="txghbot.html" data-type="Package" class="code">txghbot</a>.<a href="txghbot.test.html" data-type="Package" class="code">test</a>.<a href="txghbot.test.test_core.html" data-type="Module" class="code">test_core</a></code>
+          
+          <a href="classIndex.html#txghbot.test.test_core.WebhookDispatchingResourceTestCase">(View In Hierarchy)</a>
+        </span>
+      </div>
+
+      <div class="extrasDocstring">
+        
+      </div>
+
+      <div class="moduleDocstring">
+        <div class="undocumented">No class docstring</div>
+      </div>
+
+      <div id="splitTables">
+        <table class="children sortable" id="id21">
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#fakeVerifier" data-type="Method" class="code">fakeVerifier</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#setUp" data-type="Method" class="code">setUp</a></td>
+    <td><span class="undocumented">Undocumented</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__extractHeaderFailsWithMissingHeader" data-type="Method" class="code">test__extractHeaderFailsWithMissingHeader</a></td>
+    <td><span>_extractHeader raises <code>txghbot.InvalidData</code> when the headers 
+do not contain the requested header.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__extractHeaderFailsWithNonASCIIValue" data-type="Method" class="code">test__extractHeaderFailsWithNonASCIIValue</a></td>
+    <td><span>_extractHeader raises <code>txghbot.InvalidData</code> and logs the 
+decoding error when the requested header's first value is not ASCII.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__extractHeaderSucceedsWithFirstASCIIValue" data-type="Method" class="code">test__extractHeaderSucceedsWithFirstASCIIValue</a></td>
+    <td><span>_extractHeader returns a <code>unicode</code>/<code>str</code> 
+representing the first value for the requested header.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__deserializeContentFailsWithNonUTF8Payload" data-type="Method" class="code">test__deserializeContentFailsWithNonUTF8Payload</a></td>
+    <td><span>_deserializeContent raises <code>txghbot.InvalidData</code> and logs the
+decoding error when attempting to decode a non-UTF8 encoded payload.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__deserializeContentFailsWithInvalidJSON" data-type="Method" class="code">test__deserializeContentFailsWithInvalidJSON</a></td>
+    <td><span>_deserializeContent raises <code>txghbot.InvalidData</code> and logs the
+underlying deserialization exception when attempting to deserialize invalid
+JSON.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__deserializeContentSucceedsWithUTF8_JSON" data-type="Method" class="code">test__deserializeContentSucceedsWithUTF8_JSON</a></td>
+    <td><span>_deserializeContent successfully decodes and deserializes. UTF-8 encoded
+JSON.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__matchHookReturnsFalseOnException" data-type="Method" class="code">test__matchHookReturnsFalseOnException</a></td>
+    <td><span>_matchHook returns False if the <a href="txghbot.IWebhook.html"><code>IWebhook</code></a>'s match method 
+raises an Exception.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__matchHookReturnsHookResult" data-type="Method" class="code">test__matchHookReturnsHookResult</a></td>
+    <td><span>_matchHook returns whatever the <a href="txghbot.IWebhook.html"><code>IWebhook</code></a>'s match method 
+returns.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__processHookResultsFailsWithBadRequest" data-type="Method" class="code">test__processHookResultsFailsWithBadRequest</a></td>
+    <td><span>_processHookResults sets a status code of 400, logs the failure, and 
+finishes the request if one or more of the hooks has failed.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test__processHookResultsSucceedsWithOK" data-type="Method" class="code">test__processHookResultsSucceedsWithOK</a></td>
+    <td><span>_processHookResults sets a status code of 200 and finishes the request 
+if all hooks have run without raising an exception.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test_render_POSTFailsWithPermissionDeniedOnInvalidHMAC" data-type="Method" class="code">test_render_POSTFailsWithPermissionDeniedOnInvalidHMAC</a></td>
+    <td><span>An invalid signature results in a 403 and no hooks running.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test_render_POSTFailsWithBadRequestOnInvalidHeaders" data-type="Method" class="code">test_render_POSTFailsWithBadRequestOnInvalidHeaders</a></td>
+    <td><span>If its headers lack the necessary metadata, the request fails with a 400
+and no hooks are run.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test_render_POSTFailsWithBadRequestOnInvalidContent" data-type="Method" class="code">test_render_POSTFailsWithBadRequestOnInvalidContent</a></td>
+    <td><span>If its content cannot be decoded, the request fails with a 400 and no 
+hooks are run.</span></td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><a href="txghbot.test.test_core.WebhookDispatchingResourceTestCase.html#test_render_POSTDoesNotRunNonMatchingHooks" data-type="Method" class="code">test_render_POSTDoesNotRunNonMatchingHooks</a></td>
+    <td><span>Webhooks that do not match the event aren't run.</span></td>
+  </tr>
+</table>
+        
+
+          
+      </div>
+
+      <div id="childList">
+
+        <div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.fakeVerifier">
+    
+  </a>
+  <a name="fakeVerifier">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    fakeVerifier(self, signature, headers):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.setUp">
+    
+  </a>
+  <a name="setUp">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    setUp(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div class="undocumented">Undocumented</div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__extractHeaderFailsWithMissingHeader">
+    
+  </a>
+  <a name="test__extractHeaderFailsWithMissingHeader">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__extractHeaderFailsWithMissingHeader(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_extractHeader raises <code>txghbot.InvalidData</code> when the headers 
+do not contain the requested header.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__extractHeaderFailsWithNonASCIIValue">
+    
+  </a>
+  <a name="test__extractHeaderFailsWithNonASCIIValue">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__extractHeaderFailsWithNonASCIIValue(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_extractHeader raises <code>txghbot.InvalidData</code> and logs the 
+decoding error when the requested header's first value is not ASCII.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__extractHeaderSucceedsWithFirstASCIIValue">
+    
+  </a>
+  <a name="test__extractHeaderSucceedsWithFirstASCIIValue">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__extractHeaderSucceedsWithFirstASCIIValue(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_extractHeader returns a <code>unicode</code>/<code>str</code> 
+representing the first value for the requested header.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__deserializeContentFailsWithNonUTF8Payload">
+    
+  </a>
+  <a name="test__deserializeContentFailsWithNonUTF8Payload">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__deserializeContentFailsWithNonUTF8Payload(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_deserializeContent raises <code>txghbot.InvalidData</code> and logs the
+decoding error when attempting to decode a non-UTF8 encoded payload.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__deserializeContentFailsWithInvalidJSON">
+    
+  </a>
+  <a name="test__deserializeContentFailsWithInvalidJSON">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__deserializeContentFailsWithInvalidJSON(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_deserializeContent raises <code>txghbot.InvalidData</code> and logs the
+underlying deserialization exception when attempting to deserialize invalid
+JSON.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__deserializeContentSucceedsWithUTF8_JSON">
+    
+  </a>
+  <a name="test__deserializeContentSucceedsWithUTF8_JSON">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__deserializeContentSucceedsWithUTF8_JSON(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_deserializeContent successfully decodes and deserializes. UTF-8 encoded
+JSON.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__matchHookReturnsFalseOnException">
+    
+  </a>
+  <a name="test__matchHookReturnsFalseOnException">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__matchHookReturnsFalseOnException(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_matchHook returns False if the <a href="txghbot.IWebhook.html"><code>IWebhook</code></a>'s match method 
+raises an Exception.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__matchHookReturnsHookResult">
+    
+  </a>
+  <a name="test__matchHookReturnsHookResult">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__matchHookReturnsHookResult(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_matchHook returns whatever the <a href="txghbot.IWebhook.html"><code>IWebhook</code></a>'s match method 
+returns.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__processHookResultsFailsWithBadRequest">
+    
+  </a>
+  <a name="test__processHookResultsFailsWithBadRequest">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__processHookResultsFailsWithBadRequest(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_processHookResults sets a status code of 400, logs the failure, and 
+finishes the request if one or more of the hooks has failed.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test__processHookResultsSucceedsWithOK">
+    
+  </a>
+  <a name="test__processHookResultsSucceedsWithOK">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test__processHookResultsSucceedsWithOK(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>_processHookResults sets a status code of 200 and finishes the request 
+if all hooks have run without raising an exception.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test_render_POSTFailsWithPermissionDeniedOnInvalidHMAC">
+    
+  </a>
+  <a name="test_render_POSTFailsWithPermissionDeniedOnInvalidHMAC">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_render_POSTFailsWithPermissionDeniedOnInvalidHMAC(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>An invalid signature results in a 403 and no hooks running.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test_render_POSTFailsWithBadRequestOnInvalidHeaders">
+    
+  </a>
+  <a name="test_render_POSTFailsWithBadRequestOnInvalidHeaders">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_render_POSTFailsWithBadRequestOnInvalidHeaders(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>If its headers lack the necessary metadata, the request fails with a 400
+and no hooks are run.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test_render_POSTFailsWithBadRequestOnInvalidContent">
+    
+  </a>
+  <a name="test_render_POSTFailsWithBadRequestOnInvalidContent">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_render_POSTFailsWithBadRequestOnInvalidContent(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>If its content cannot be decoded, the request fails with a 400 and no 
+hooks are run.</p><table class="fieldTable"></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  <a name="txghbot.test.test_core.WebhookDispatchingResourceTestCase.test_render_POSTDoesNotRunNonMatchingHooks">
+    
+  </a>
+  <a name="test_render_POSTDoesNotRunNonMatchingHooks">
+    
+  </a>
+  <div class="functionHeader">
+    
+    def
+    test_render_POSTDoesNotRunNonMatchingHooks(self):
+    
+  </div>
+  <div class="docstring functionBody">
+    
+    
+    <div><p>Webhooks that do not match the event aren't run.</p><table class="fieldTable"></table></div>
+  </div>
+</div>
+
+      </div>
+      <address>
+        <a href="index.html">API Documentation</a> for txghbot, generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a> at 2016-10-15 18:47:31.
+      </address>
+
+    </div>
+
+    <script type="text/javascript" src="pydoctor.js"></script>
+
+  </body>
+</html>
