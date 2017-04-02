@@ -8,5 +8,5 @@ A server that runs [Twisted](https://www.twistedmatrix.com) [plugins](http://twi
 ## Usage
 
 1. Write a plugin that implements [`txghbot.IWebhook`](http://markrwilliams.github.io/txghbot/apidocs/txghbot.IWebhook.html) and make it accessible to `twisted.plugin`.
-2. Put the secret in a file, such as `.dev/secret`
-3. `twist txghbot --secret=./dev/secret`
+2. Put the secret in a file, such as `.dev/secret`, or in an environment variable
+3. `twist txghbot --secret-from-path=.dev/secret` or `twist txghbot --secret-from-env=THE_SECRET_VAR`
