@@ -133,17 +133,8 @@ class OptionsTests(unittest.TestCase):
         self.config = Options(self.osModuleFake)
 
     def tearDown(self):
-        self.quietlyRemoveFile()
-
-    def quietlyRemoveFile(self):
-        """
-        Remove L{secretFile}, suppressing ENOENT.
-        """
-        try:
+        if self.secretFile.exists():
             self.secretFile.remove()
-        except OSError as e:
-            if e.errno != errno.ENOENT:
-                raise
 
     def secretFromEnvironmentOption(self, variable):
         """
