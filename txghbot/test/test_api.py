@@ -1,8 +1,13 @@
-from txghbot._api import (makeWebhookDispatchingResource, readSecret,
+import attr
+import attr.validators
+import errno
+from txghbot._api import (Options, makeWebhookDispatchingResource,
                           WebhookDispatchServiceMaker)
 from txghbot._core import IWebhook
+from twisted.python.usage import UsageError
 from twisted.python.filepath import FilePath
 from twisted.trial import unittest
+import six
 from zope.interface import implementer
 from zope.interface.exceptions import DoesNotImplement, BrokenImplementation
 
@@ -78,39 +83,149 @@ class MakeWebhookDispatchingResourceTestCase(unittest.SynchronousTestCase):
         self.assertEqual(rsrc.hooks, hooks)
 
 
-class ReadSecretTests(unittest.TestCase):
+@attr.s
+class _FakeOSModule(object):
     """
-    Tests for L{txghbot._api.readSecret}
+    A fake L{os} module that exposes an environment dictionary.
+    """
+    environ = attr.ib()
+    if not six.PY2:
+        environb = attr.ib()
+
+    @classmethod
+    def fromdicts(cls, str_dict, bytes_dict):
+        """
+        Create an instance where L{str_dict} goes to L{environ} and,
+        on Python 3, L{bytes_dict} goes to L{environb}.
+
+        @type str_dict: A L{dict} of L{str}s
+        @param str_dict: A fake process environment, as native
+            strings.
+
+        @type bytes_dict: A L{dict} of L{bytes}s
+        @param bytes_dict: A fake process environment, as bytes.
+
+        @return: The fake.
+        @rtype: L{_FakeOSModule}
+        """
+        kwargs = {"environ": str_dict}
+        if not six.PY2:
+            kwargs["environb"] = bytes_dict
+        return cls(**kwargs)
+
+
+class OptionsTests(unittest.TestCase):
+    """
+    Tests for L{txghbot._api.Options}
     """
     def setUp(self):
         self.secretFilePath = self.mktemp()
         self.secretFile = FilePath(self.secretFilePath)
-        self.addCleanup(self.secretFile.remove)
+        self.secretFromPathOption = "--secret-from-path={}".format(
+            self.secretFilePath)
 
-    def test_emptySecret(self):
+        self.stringEnviron = {}
+        self.bytesEnviron = {}
+
+        self.osModuleFake = _FakeOSModule.fromdicts(self.stringEnviron,
+                                                    self.bytesEnviron)
+
+        self.config = Options(self.osModuleFake)
+
+    def tearDown(self):
+        if self.secretFile.exists():
+            self.secretFile.remove()
+
+    def secretFromEnvironmentOption(self, variable):
         """
-        An empty secret file raises a L{RuntimeError}
+        Generate the secret from environment variable command line
+        option.
+
+        @type variable: L{str}
+        @param variable: The variable name
+
+        @return: The formatted option containing the path.
+        @rtype: L{str}
+        """
+        return "--secret-from-env={}".format(variable)
+
+    def test_retrieveSecretFromEmptyPath(self):
+        """
+        An empty secret file raises an L{OSError}
         """
         self.secretFile.touch()
-        exc = self.assertRaises(RuntimeError, readSecret, self.secretFilePath)
+        exc = self.assertRaises(
+            UsageError,
+            self.config.parseOptions, [self.secretFromPathOption],
+        )
         self.assertIn("empty", str(exc).lower())
 
-    def test_secretRetrieved(self):
+    def test_retrieveSecretFromMissingPath(self):
+        """
+        An missing secret file raises an L{IOError}
+        """
+        self.assertRaises(
+            IOError,
+            self.config.parseOptions, [self.secretFromPathOption],
+        )
+
+    def test_retrieveSecretFromPath(self):
         """
         A newline-stripped secret is returned.  Internal whitespace is
         preserved.
         """
-        with self.secretFile.open('w') as f:
+        with self.secretFile.open('wb') as f:
             f.write(b" this is a secret \r\n")
+        self.config.parseOptions([self.secretFromPathOption])
 
-        self.assertEqual(readSecret(self.secretFilePath),
-                         b" this is a secret ")
+        self.assertEqual(self.config["secret"], b" this is a secret ")
+
+    def test_retrieveSecretFromEmptyEnvironment(self):
+        """
+        A L{UsageError} is raised when attempting to retrieve a secret
+        from an environment that doesn't contain the provided
+        variable.
+        """
+
+        self.assertRaises(UsageError,
+                          self.config.parseOptions,
+                          [self.secretFromEnvironmentOption("MISSING")])
+
+    def test_retrieveSecretFromEnvironment(self):
+        """
+        The secret is retrieved as bytes from the process'
+        environment.
+        """
+        self.bytesEnviron[b"SECRET"] = b"a secret"
+        self.stringEnviron["SECRET"] = "a secret"
+
+        self.config.parseOptions([self.secretFromEnvironmentOption("SECRET")])
+
+        self.assertEqual(self.config["secret"], b"a secret")
+
+    def test_missingSecret(self):
+        """
+        Omitting both a secret path and a secret environment variable
+        name results in a L{UsageError}.
+        """
+        self.assertRaises(UsageError, self.config.parseOptions, [])
+
+    def test_bothSecrets(self):
+        """
+        Including both a secret path and a secret environment variable
+        name results in a L{UsageError}.
+        """
+        self.assertRaises(UsageError, self.config.parseOptions,
+                          [self.secretFromPathOption,
+                           self.secretFromEnvironmentOption("REDUNDANT")])
 
 
+@attr.s
 class FakeModuleWrapper(object):
-
-    def __init__(self, loadReturns):
-        self._loadReturns = loadReturns
+    """
+    A fake L{twisted.python.modules.PythonModule}
+    """
+    _loadReturns = attr.ib()
 
     def load(self):
         return self._loadReturns
@@ -123,12 +238,10 @@ class WebhookDispatchServiceMakerTests(unittest.TestCase):
 
     def setUp(self):
         self.config = {
-            "secret": "secret path",
+            "secret": "secret",
             "plugins": "plugin path",
             "logfile": "logfile path",
             "port": "strport"}
-        self.readSecretCalls = []
-        self.readSecretReturns = None
 
         self.getModuleCalls = []
         self.fakeModule = 'fake module'
@@ -148,17 +261,12 @@ class WebhookDispatchServiceMakerTests(unittest.TestCase):
         self.strportsServiceReturns = None
 
         self.service = WebhookDispatchServiceMaker(
-            _readSecret=self.fakeReadSecret,
             _getModule=self.fakeGetModule,
             _getPlugins=self.fakeGetPlugins,
             _makeWebhookDispatchingResource=self.fakeMakeWebhookDR,
             _Site=self.fakeSite,
             _strportsService=self.fakeStrportsService,
         )
-
-    def fakeReadSecret(self, path):
-        self.readSecretCalls.append(path)
-        return self.readSecretReturns
 
     def fakeGetModule(self, fqpn):
         self.getModuleCalls.append(fqpn)
@@ -179,32 +287,6 @@ class WebhookDispatchServiceMakerTests(unittest.TestCase):
     def fakeStrportsService(self, port, site):
         self.strportsServiceCalls.append((port, site))
         return self.strportsServiceReturns
-
-    def test_missingSecret(self):
-        """
-        "A L{RuntimeError} is raised when the secret parameter is not
-        provided."
-        """
-        self.config['secret'] = None
-        exc = self.assertRaises(RuntimeError,
-                                self.service.makeService, self.config)
-        self.assertIn("secret", str(exc))
-
-    def test_secretRead(self):
-        """
-        The secret passed to
-        L{txghbot._api.makeWebhookDispatchingResource} is retrieved
-        from the path provided in the C{secret} configuration
-        parameter.
-        """
-        self.readSecretReturns = "a secret"
-
-        self.service.makeService(self.config)
-
-        self.assertEqual(self.readSecretCalls, [self.config["secret"]])
-        self.assertEqual(len(self.makeWebhookDispatchingResourceCalls), 1)
-        [(secret, _)] = self.makeWebhookDispatchingResourceCalls
-        self.assertIs(secret, self.readSecretReturns)
 
     def test_pluginPathProvided(self):
         """
